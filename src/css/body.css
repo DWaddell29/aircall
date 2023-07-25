@@ -13,3 +13,12 @@ body {
   color: #333333;
   line-height: 1;
 }
+
+.activity{
+  display:flex;
+  width:100%;
+  min-height: 50px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  border:1px solid lightgrey;
+}
