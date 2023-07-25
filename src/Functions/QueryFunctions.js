@@ -14,6 +14,10 @@ async function getAllCalls(){
     let unarchived = [];
     let archived = [];
     for(let i = 0; i < data.length; i++){
+        let call = data[i]
+        if(!call.call_type || !call.direction || !call.from || !call.to){
+            continue;
+        }
         if(data[i].is_archived){
             archived.push(data[i])
         }

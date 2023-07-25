@@ -16,9 +16,80 @@ body {
 
 .activity{
   display:flex;
-  width:100%;
-  min-height: 50px;
-  margin-bottom: 5px;
+  flex-direction: row;
+  max-width:100%;
+  height: fit-content;
+  margin: 0 5px 5px 5px;
   border-radius: 10px;
   border:1px solid lightgrey;
+  cursor: pointer;
+  overflow: hidden;
+  padding-left:5px;
+  
+}
+
+.callImage{
+  flex:2;
+  background-color: red;
+
+}
+.callDetails{
+  flex:8;
+  background-color: blue;
+}
+.callTime{
+  flex:3;
+  background-color: green;
+
+}
+
+.moreCalls{
+  border:1px solid grey;
+  display:flex;
+  flex-direction: column;
+  overflow:hidden;
+}
+.shown{
+  animation: expand 2s ease-in;
+}
+.hide{
+  animation: contract 2s ease-in;
+}
+.hidden{
+  display:none;
+}
+
+
+@keyframes expand{
+  from{
+    max-height:0%;
+  }
+  to{
+    max-height:100%;
+  }
+}
+@keyframes contract{
+  from{
+    max-height:100%;
+  }
+  to{
+    max-height:0%;
+  }
+}
+
+.PhoneNumberLine{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: bold;
+}
+
+.NumberOfCalls{
+  border-radius: 100%;
+  background-color: red;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  height:1em;
+  width:1em;
 }

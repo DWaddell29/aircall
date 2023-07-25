@@ -1,13 +1,21 @@
 header {
   height: 40px;
-  margin: 0 auto;
+  width:100%;
+  margin: 0 20;
   padding: 20px 0;
   text-align: center;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
   align-self: center;
+  display: flex;
+  flex-direction: row;
 }
 
 header svg {
   display: block;
   width: 100%; height: 100%;
+  flex:1;
+}
+
+header .tabSection{
+  flex:2;
 }
