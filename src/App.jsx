@@ -1,10 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from "react-dom/client";
 import { useEffect, useState } from 'react';
 import { getAllCalls } from './Functions/QueryFunctions.js';
 import {useSelector} from "react-redux";
 import {Provider} from "react-redux"
 import Store from './Store.js';
+import { setAllCallsArchived, setAllCallsUnarchived } from './Functions/ArchiveFunctions.js';
 
 import Header from './Components/Header.jsx';
 import Activity from './Components/Activity.js';
@@ -20,10 +21,14 @@ const App = () => {
     getAllCalls();
   },[]);
 
+  useEffect(()=>{
+    console.log(activities);
+  },[view])
+
   function getActivities(){
     let activitiesArr = activities.unarchivedCalls;
     if(view !== "inbox"){
-      activitiesArr.concat(activities.archivedCalls);
+      activitiesArr = activitiesArr.concat(activities.archivedCalls);
     }
     let organizedActs = {}
     for(let i = 0; i < activitiesArr.length; i++){
@@ -47,9 +52,9 @@ const App = () => {
         {Object.entries(activitiesMap).map(([dateString,dateActsObj])=>{
           return(
             <>
-              <DateSeparator date={dateString}/>
+              <DateSeparator date={dateString} key={dateString}/>
               {
-                Object.entries(dateActsObj).map(([PhoneNumber,activitiesArr])=>{
+                Object.entries(dateActsObj).map(([PhoneNumber,activitiesArr],index)=>{
                   return <Activity activities={activitiesArr}/>
                 })
               }
@@ -60,10 +65,42 @@ const App = () => {
     )
   }
 
+  function renderArchiveButton(){
+    if(view === "inbox"){
+      return (
+        <button onClick={setAllCallsArchived} className='activity'>
+          <div className='callImage'>
+
+          </div>
+          <div className='callDetailsBox'>
+            <p>Archive all calls</p>
+          </div>
+          <div className='callTime'>
+
+          </div>
+        </button>
+      )
+    }
+    return (
+      <button onClick={setAllCallsUnarchived} className='activity Clickable'>
+        <div className='callImage'>
+
+        </div>
+        <div className='callDetailsBox'>
+          <p>Unarchive all calls</p>
+        </div>
+        <div className='callTime'>
+
+        </div>
+      </button>
+    )
+  }
+
   return (
     <div className='container'>
-      <Header/>
+      <Header setView={setView}/>
       <div className="container-view">
+        {renderArchiveButton()}
         {renderActivities()}
       </div>
       <Footer/>
@@ -71,10 +108,12 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-<Provider store = {Store}>
-<App/>
-</Provider>
-, document.getElementById('app'));
+const container =  document.getElementById('app');
+const root = createRoot(container)
+root.render(
+  <Provider store = {Store}>
+    <App/>
+  </Provider>
+)
 
 export default App;

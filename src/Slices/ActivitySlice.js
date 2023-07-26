@@ -10,30 +10,42 @@ export const activitySlice = createSlice({
     reducers:{
         archiveCall: (state,action)=>{
             let id = action.payload.id;
-            let call = this.unarchivedCalls.filter((call)=>call.id === id);
-            let validCalls = this.unarchivedCalls.filter((call)=>call.id!==id);
+            let call = state.unarchivedCalls.filter((call)=>call.id === id);
+            let updatedCall = [...call]
+            for(let i = 0; i < updatedCall.length; i++){
+                updatedCall[i].is_archived = true
+            }
+            let validCalls = state.unarchivedCalls.filter((call)=>call.id!==id);
             if(call.length === 0){
                 return{...state}
             }
             else{
-                return{
-                    ...state,
-                    unarchivedCalls:[...validCalls],
-                    archivedCalls:[...state.archivedCalls,...call]
-                }
+                state.unarchivedCalls = [...validCalls],
+                state.archivedCalls = [...state.archivedCalls,...updatedCall]
             }
         },
         unarchiveCall:(state,action)=>{
+            let id = action.payload.id;
+            let call = state.archivedCalls.filter((call)=>call.id === id);
+            for(let i = 0; i < call.length; i++){
+                call[i].is_archived = false
+            }
+            let validCalls = state.archivedCalls.filter((call)=>call.id!==id);
+            if(call.length === 0){
+                return{...state}
+            }
+            else{
+                state.archivedCalls=[...validCalls],
+                state.unarchivedCalls=[...state.unarchivedCalls,...call]
+            }
 
         },
         unarchiveAllCalls:(state,action)=>{
-            let newAr = this.archivedCalls;
-            let unAr = this.unarchivedCalls
-            return{
-                ...state,
-                archivedCalls:[...newAr,...unAr],
-                unarchivedCalls:[]
+            for(let i = 0; i < state.archivedCalls.length; i++){
+                state.archivedCalls[i].is_archived = false;
             }
+            state.unarchivedCalls = [...state.unarchivedCalls,...state.archivedCalls];
+            state.archivedCalls = []
         },
         setArchivedCalls:(state,action)=>{
             return {

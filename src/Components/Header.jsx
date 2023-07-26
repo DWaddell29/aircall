@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = () => {
+const Header = (props) => {
   return (
     <header>
       <svg width='486px' height='168px' viewBox='0 0 486 168' version='1.1' xmlns='http://www.w3.org/2000/svg'>
@@ -19,7 +19,12 @@ const Header = () => {
         </g>
       </svg>
       <div className="tabSection">
-    
+          <button onClick={()=>props?.setView && props.setView("inbox")}>
+            <p>Inbox</p>
+          </button>
+          <button onClick={()=>props?.setView && props?.setView("allcalls")}>
+            <p>All Calls</p>
+          </button>
       </div>
     </header>
   );

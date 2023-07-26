@@ -1,0 +1,104 @@
+
+.activity{
+    display:flex;
+    flex-direction: column;
+    width:100%;
+    height: fit-content;
+    margin: 0 5px 5px 5px;
+    border-radius: 10px;
+    border:1px solid lightgrey;
+    overflow: hidden;
+    padding-left:5px;
+
+}
+.mainActivityBody{
+    display:flex;
+    flex-direction: row;
+}
+
+.callImage{
+    flex:2;
+    background-color: red;
+
+}
+.callDetailsBox{
+    flex:8;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;;
+}
+.callDetails{
+
+}
+.callTimeContainer{
+    display:flex;
+    flex:3;
+    background-color: green;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.moreCalls{
+    border:1px solid grey;
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+    margin: 0 5px 5px 5px;
+}
+.moreCalls .activity{
+    padding-left:0;
+}
+.shown{
+    animation: expand .5s ease-in;
+}
+.hide{
+    animation: contract .5s ease-in;
+}
+.hidden{
+    display:none;
+}
+
+
+@keyframes expand{
+    from{
+        max-height:0%;
+    }
+    to{
+        max-height:100%;
+    }
+}
+@keyframes contract{
+    from{
+        max-height:100%;
+    }
+    to{
+        max-height:0%;
+    }
+}
+
+.callDetails p{
+    font-size: 1em;
+    margin:5px 0;
+}
+.PhoneNumberLine{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: bold;
+}
+
+.NumberOfCalls{
+    border-radius: 100%;
+    background-color: red;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    height:1em;
+    width:1em;
+    margin-left:1em;
+}
+.callDescription{
+    color:grey;
+}

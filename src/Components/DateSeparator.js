@@ -1,10 +1,10 @@
 import React from "react";
 import getMonthString from "../Functions/getMonthString";
+import Divider from "@mui/material/Divider"
 
 export default function DateSeparator(props){
     let splitDate = props?.date?.split("-")
-    console.log(splitDate);
     return (
-        <p className="DateSeperator">{props.date}</p>
+        <Divider>{props.date}</Divider>
     );
 }

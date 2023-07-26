@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { archiveCall,unarchiveCall } from '../Functions/ArchiveFunctions';
+import { setCallArchived,setCallUnarchived } from '../Functions/ArchiveFunctions';
+import {Menu,MenuItem, ClickAwayListener} from "@mui/material"
+import {MoreVert} from "@mui/icons-material";
 
 export default function Activity(props){
     const [showCalls,setShowCalls] = useState(false);
+    const [anchorEl,setAnchorEl] = useState(null)
+    const [showCallDetails, setShowCallDetails] = useState(false);
+    const isOpen = Boolean(anchorEl);
     const call = props.activities[props.activities.length-1];
     const timeoutRef = useRef(null);
-
 
 
     function handleOnClick(){
@@ -27,7 +31,7 @@ export default function Activity(props){
                 timeoutRef.current = setTimeout(()=>{
                     element.classList.toggle("hidden",true);
                     element.classList.toggle("hide",false);
-                },2000)
+                },500)
 
             }
             return;
@@ -68,35 +72,72 @@ export default function Activity(props){
     }
 
     function getTime(){
+        let timeString = new Date(call.created_at).toLocaleTimeString();
+        let splitTime = timeString.split(" ");
+        let time = splitTime[0];
+        let amPm = splitTime[1].replaceAll(".","").toUpperCase();
+        splitTime = time.split(":")
+        let hrs = splitTime[0].padStart(2,"0");
+        let min = splitTime[1].padStart(2,"0");
+        return `${hrs}:${min} ${amPm}`
+    }
+
+    function handleClickAway(e){
+        setAnchorEl(null)
+        console.log(isOpen)
 
     }
     
     return (
         <>
-            <div className='activity' onClick={handleOnClick}>
-                <div className='callImage'>
+            <div className={`activity ${props?.activities?.length >1 ? "Clickable":""}`} onClick={handleOnClick}>
+                <div className="mainActivityBody">
+                    <div className='callImage'>
 
-                </div>
-                <div className='callDetails'>
-                    <div className='PhoneNumberLine'>
-                        <p className='PhoneNumber'>
-                            {getPhoneNumber()}
-                        </p>
-                        {
-                            props?.activities.length > 1 && <div className='NumberOfCalls'>{props?.activities.length}</div>
+                    </div>
+                    <div className='callDetailsBox'>
+                        <div className="callDetails">
+                            <div className='PhoneNumberLine'>
+                                <p className='PhoneNumber'>
+                                    {getPhoneNumber()}
+                                </p>
+                                {
+                                    props?.activities.length > 1 && <div className='NumberOfCalls'>{props?.activities.length}</div>
+                                }
+                            </div>
+                            <p className='callDescription'>
+                                {getCallDescription()}
+                            </p>
+                        </div>
+                        { props?.activities?.length === 1 &&
+                        <>
+                            <ClickAwayListener onClickAway={handleClickAway}>
+                                <MoreVert className='Clickable' onClick={(e)=>{setAnchorEl(e.currentTarget)}}/>
+                            </ClickAwayListener>
+                            <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{vertical:"bottom",horizontal:"left"}} transformOrigin={{vertical:"top",horizontal:"right"}}>
+                                {call.is_archived && <MenuItem onClick={()=>{setCallUnarchived(call.id);setAnchorEl(null)}}>Unarchive Call</MenuItem>}
+                                {!call.is_archived && <MenuItem onClick={()=>{setCallArchived(call.id);setAnchorEl(null)}}>Archive Call</MenuItem>}
+                                <MenuItem onClick={()=>{setAnchorEl(null);setShowCallDetails(true)}}>Show Call Details</MenuItem>
+                            </Menu>
+                        </> 
                         }
                     </div>
-                    <p className='callDescription'>
-                        {getCallDescription()}
-                    </p>
+                    <div className='callTimeContainer'>
+                        <p>{getTime()}</p>
+                    </div>
                 </div>
-                <div className='callTime'>
-
+                { showCallDetails &&
+                <div className="additionalDetails">
+                    <p>From: {call.from}</p>
+                    <p>To: {call.to}</p>
+                    <p>Call Duration: {call.duration}</p>
+                    <p>Archived: {call.is_archived ? "Yes" : "No"}</p>
                 </div>
+                }
             </div>
             {props.activities.length >1 &&
                 <div className="moreCalls hidden" id={`parentActivity:${call.id}`}>
-                    {props.activities.reverse().map((activity,index)=>{
+                    {props.activities.map((activity,index)=>{
                         return <Activity activities={[activity]} key={index}/>
                     })}
                 </div>
