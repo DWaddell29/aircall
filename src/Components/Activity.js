@@ -11,7 +11,8 @@ export default function Activity(props){
     const [showCallDetails, setShowCallDetails] = useState(false);
     const isOpen = Boolean(anchorEl);
     const call = props.activities[props.activities.length-1];
-    const timeoutRef = useRef(null);
+    const moreCallsTimeoutRef = useRef(null);
+    const callDetailsTimeoutRef = useRef(null);
 
 
     function handleOnClick(e){
@@ -19,9 +20,9 @@ export default function Activity(props){
             let show = !showCalls
             setShowCalls(show);
             let activity = e.currentTarget;
-            let element = document.getElementById(`parentActivity:${call.id}`)
+            let element = document.getElementById(`moreCallsDiv:${call.id}`)
             if(show){
-                clearTimeout(timeoutRef.current);
+                clearTimeout(moreCallsTimeoutRef.current);
                 element.classList.toggle("hide",false)
                 element.classList.toggle("hidden",false);
                 element.classList.toggle("shown",true)
@@ -31,7 +32,7 @@ export default function Activity(props){
                 element.classList.toggle("hidden",false);
                 element.classList.toggle("shown",false)
                 element.classList.toggle("hide",true);
-                timeoutRef.current = setTimeout(()=>{
+                moreCallsTimeoutRef.current = setTimeout(()=>{
                     activity.classList.toggle("dropdownVisible",false);
                     element.classList.toggle("hidden",true);
                     element.classList.toggle("hide",false);
@@ -39,6 +40,27 @@ export default function Activity(props){
 
             }
             return;
+        }
+
+    }
+
+    function handleCallDetailsOnClick(){
+        setAnchorEl(null)
+        let show = !showCallDetails;
+        let element = document.getElementById(`activity:${call.id}`)
+        clearTimeout(callDetailsTimeoutRef.current);
+        if(show){
+            setShowCallDetails(show);
+            element.classList.toggle("hideCallDetails",false);
+            element.classList.toggle("showCallDetails",true);
+        }
+        else{
+            element.classList.toggle("hideCallDetails",true);
+            element.classList.toggle("showCallDetails",false);
+            callDetailsTimeoutRef.current = setTimeout(()=>{
+                element.classList.toggle("hideCallDetails",false);
+                setShowCallDetails(false);
+            },500)
         }
 
     }
@@ -116,7 +138,7 @@ export default function Activity(props){
     
     return (
         <>
-            <div className={`activity ${props?.activities?.length >1 ? "Clickable":""}`} onClick={handleOnClick}>
+            <div className={`activity ${props?.activities.length > 1 ? 'Clickable' : ""}`} id={`activity:${call.id}`} onClick={handleOnClick}>
                 <div className="mainActivityBody">
                     <div className='callImage'>
                         {getCallIcon()}
@@ -143,7 +165,8 @@ export default function Activity(props){
                             <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{vertical:"bottom",horizontal:"left"}} transformOrigin={{vertical:"top",horizontal:"right"}}>
                                 {call.is_archived && <MenuItem onClick={()=>{setCallUnarchived(call.id);setAnchorEl(null)}}>Unarchive Call</MenuItem>}
                                 {!call.is_archived && <MenuItem onClick={()=>{setCallArchived(call.id);setAnchorEl(null)}}>Archive Call</MenuItem>}
-                                <MenuItem onClick={()=>{setAnchorEl(null);setShowCallDetails(true)}}>Show Call Details</MenuItem>
+                                {!showCallDetails && <MenuItem onClick={()=>{handleCallDetailsOnClick()}}>Show Call Details</MenuItem>}
+                                {showCallDetails && <MenuItem onClick={()=>{handleCallDetailsOnClick()}}>Hide Call Details</MenuItem>}
                             </Menu>
                         </> 
                         }
@@ -158,11 +181,12 @@ export default function Activity(props){
                     <p>To: {call.to}</p>
                     <p>Call Duration: {call.duration}</p>
                     <p>Archived: {call.is_archived ? "Yes" : "No"}</p>
+                    <p>Aircall Number: {call.via}</p>
                 </div>
                 }
             </div>
             {props.activities.length >1 &&
-                <div className="moreCalls hidden" id={`parentActivity:${call.id}`}>
+                <div className="moreCalls hidden" id={`moreCallsDiv:${call.id}`}>
                     {props.activities.map((activity,index)=>{
                         return <Activity activities={[activity]} key={`activity:${activity.id}`}/>
                     })}
