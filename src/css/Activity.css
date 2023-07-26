@@ -8,7 +8,6 @@
     border-radius: 10px;
     border:1px solid lightgrey;
     overflow: hidden;
-    padding-left:5px;
 
 }
 .mainActivityBody{
@@ -18,8 +17,13 @@
 
 .callImage{
     flex:2;
-    background-color: red;
-
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.callImage svg{
+    height:30px;
+    width:30px;
 }
 .callDetailsBox{
     flex:8;
@@ -28,27 +32,33 @@
     justify-content: space-between;
     align-items: center;;
 }
-.callDetails{
 
-}
 .callTimeContainer{
     display:flex;
     flex:3;
-    background-color: green;
     justify-content: center;
     align-items: center;
 }
 
+.dropdownVisible{
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom:none;
+}
 
 .moreCalls{
-    border:1px solid grey;
+    border:1px solid lightgrey;
     width: 100%;
     display:flex;
     flex-direction: column;
-    margin: 0 5px 5px 5px;
+    margin: -5px 5px 0 5px ;
 }
 .moreCalls .activity{
-    padding-left:0;
+    margin: 0 5px 5px 5px;
+    width:calc(100% - 10px);
+}
+.moreCalls .activity:first-child{
+    margin-top:5px !important;
 }
 .shown{
     animation: expand .5s ease-in;

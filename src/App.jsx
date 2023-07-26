@@ -11,6 +11,7 @@ import Header from './Components/Header.jsx';
 import Activity from './Components/Activity.js';
 import Footer from "./Components/Footer.js"
 import DateSeparator from './Components/DateSeparator.js';
+import Inbox from './SVGs/Inbox.js';
 
 const App = () => {
 
@@ -21,15 +22,20 @@ const App = () => {
     getAllCalls();
   },[]);
 
-  useEffect(()=>{
-    console.log(activities);
-  },[view])
 
   function getActivities(){
-    let activitiesArr = activities.unarchivedCalls;
+    let activitiesArr = [...activities.unarchivedCalls];
     if(view !== "inbox"){
       activitiesArr = activitiesArr.concat(activities.archivedCalls);
     }
+    activitiesArr.sort((a,b)=>{
+      if(new Date(a.created_at) < new Date(b.created_at)){
+        return -1;
+      }
+      else{
+        return 1
+      }
+    })
     let organizedActs = {}
     for(let i = 0; i < activitiesArr.length; i++){
       let phoneNumber = activitiesArr[i].direction === "inbound" ? activitiesArr[i].from : activitiesArr[i].to
@@ -55,7 +61,7 @@ const App = () => {
               <DateSeparator date={dateString} key={dateString}/>
               {
                 Object.entries(dateActsObj).map(([PhoneNumber,activitiesArr],index)=>{
-                  return <Activity activities={activitiesArr}/>
+                  return <Activity activities={activitiesArr} key={`ParentActivity:${activitiesArr[activitiesArr.length-1].id}`}/>
                 })
               }
             </>
@@ -68,9 +74,9 @@ const App = () => {
   function renderArchiveButton(){
     if(view === "inbox"){
       return (
-        <button onClick={setAllCallsArchived} className='activity'>
+        <button onClick={setAllCallsArchived} className='activity mainActivityBody Clickable'>
           <div className='callImage'>
-
+            <Inbox/>
           </div>
           <div className='callDetailsBox'>
             <p>Archive all calls</p>
@@ -82,9 +88,9 @@ const App = () => {
       )
     }
     return (
-      <button onClick={setAllCallsUnarchived} className='activity Clickable'>
+      <button onClick={setAllCallsUnarchived} className='activity mainActivityBody Clickable'>
         <div className='callImage'>
-
+          <Inbox/>
         </div>
         <div className='callDetailsBox'>
           <p>Unarchive all calls</p>
@@ -103,7 +109,7 @@ const App = () => {
         {renderArchiveButton()}
         {renderActivities()}
       </div>
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 };

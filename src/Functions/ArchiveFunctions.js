@@ -10,7 +10,6 @@ async function setCallArchived(id){
         },
         body:JSON.stringify({is_archived:true})
     })
-    console.log(response.status)
     if(response.status === 200){
         Store.dispatch(archiveCall({id}))
     }
@@ -45,26 +44,21 @@ async function setAllCallsUnarchived(){
 async function setAllCallsArchived(){
     let currState = Store.getState()
     let unarchivedCalls = currState.activities.unarchivedCalls;
-    let promises = [];
     for(let i = 0; i < unarchivedCalls.length; i++){
         let id = unarchivedCalls[i].id
-        let response = fetch(`${base_url}/activities/${id}`,{
+        fetch(`${base_url}/activities/${id}`,{
             method:"PATCH",
             headers:{
                 "Content-type":"Application/json"
             },
             body:JSON.stringify({is_archived:true})
-        })
-        promises.push(response)
-    }
-    Promise.all(promises).then((responses)=>{
-        for(let i = 0; i <responses.length; i++){
-            let id = responses[i].url.replace(`${base_url}/activities/`,"");
-            if(responses[i].status === 200){
+        }).then((value)=>{
+            if(value.status === 200){
                 Store.dispatch(archiveCall({id}))
             }
-        }
-    });
+        })
+    }
+
 }
 
 export {setAllCallsUnarchived, setCallArchived, setCallUnarchived, setAllCallsArchived}

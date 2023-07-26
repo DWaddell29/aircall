@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { setCallArchived,setCallUnarchived } from '../Functions/ArchiveFunctions';
 import {Menu,MenuItem, ClickAwayListener} from "@mui/material"
-import {MoreVert} from "@mui/icons-material";
+import {MoreVert, Voicemail} from "@mui/icons-material";
+import {SuccessfulInboundCall, UnsuccessfulInboundCall} from '../SVGs/inboundCall';
+import { SuccessfulOutboundCal, UnsuccessfulOutboundCall } from '../SVGs/outboundCalls';
 
 export default function Activity(props){
     const [showCalls,setShowCalls] = useState(false);
@@ -12,23 +14,25 @@ export default function Activity(props){
     const timeoutRef = useRef(null);
 
 
-    function handleOnClick(){
+    function handleOnClick(e){
         if(props.activities.length > 1){
             let show = !showCalls
             setShowCalls(show);
+            let activity = e.currentTarget;
             let element = document.getElementById(`parentActivity:${call.id}`)
             if(show){
                 clearTimeout(timeoutRef.current);
                 element.classList.toggle("hide",false)
                 element.classList.toggle("hidden",false);
                 element.classList.toggle("shown",true)
+                activity.classList.toggle("dropdownVisible",true);
             }
             else{
-                clearTimeout(timeoutRef.current);
                 element.classList.toggle("hidden",false);
                 element.classList.toggle("shown",false)
                 element.classList.toggle("hide",true);
                 timeoutRef.current = setTimeout(()=>{
+                    activity.classList.toggle("dropdownVisible",false);
                     element.classList.toggle("hidden",true);
                     element.classList.toggle("hide",false);
                 },500)
@@ -84,8 +88,30 @@ export default function Activity(props){
 
     function handleClickAway(e){
         setAnchorEl(null)
-        console.log(isOpen)
 
+    }
+
+    function getCallIcon(){
+        if(call?.direction === "outbound"){
+            switch(call.call_type){
+                case "missed":
+                    return <UnsuccessfulOutboundCall/>
+                case "answered":
+                    return <SuccessfulOutboundCal/>;
+                case "voicemail":
+                    return <Voicemail/>;
+            }
+        }
+        else{
+            switch(call.call_type){
+                case "missed":
+                    return <UnsuccessfulInboundCall/>;
+                case "answered":
+                    return <SuccessfulInboundCall/>;
+                case "voicemail":
+                    return <Voicemail/>;
+            }
+        }
     }
     
     return (
@@ -93,7 +119,7 @@ export default function Activity(props){
             <div className={`activity ${props?.activities?.length >1 ? "Clickable":""}`} onClick={handleOnClick}>
                 <div className="mainActivityBody">
                     <div className='callImage'>
-
+                        {getCallIcon()}
                     </div>
                     <div className='callDetailsBox'>
                         <div className="callDetails">
@@ -138,7 +164,7 @@ export default function Activity(props){
             {props.activities.length >1 &&
                 <div className="moreCalls hidden" id={`parentActivity:${call.id}`}>
                     {props.activities.map((activity,index)=>{
-                        return <Activity activities={[activity]} key={index}/>
+                        return <Activity activities={[activity]} key={`activity:${activity.id}`}/>
                     })}
                 </div>
             }

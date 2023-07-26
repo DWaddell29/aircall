@@ -33,7 +33,6 @@ async function getAllCalls(){
 async function getCallDetails(id){
     let response = await fetch(`${base_url}/activities/${id}`)
     let data = await response.json();
-    console.log(data);
 }
 
 export {getAllCalls,getCallDetails};
